@@ -62,7 +62,7 @@ function createOpenTimeline() {
 }
 
 function handleMenuClick() {
-    const tl = gsap.timeline({ paused: true });
+    const tl = gsap.timeline({ paused: true, reversed: true });
 
     // Анимация для .menu__top: появление сверху вниз
     tl.from(".menu__top", {
@@ -74,9 +74,9 @@ function handleMenuClick() {
 
     // Анимация для .menu__container: появление снизу вверх
     .from(".menu__container", {
-        y: 30,
+        y: 50,
         opacity: 0,
-        duration: 1,
+        duration: 1.2,
         ease: "power2.out"
     }, 0.4)
 
@@ -100,32 +100,24 @@ function handleMenuClick() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const burger = document.querySelector('.burger'); // Получили кнопку
-    const closeButton = document.querySelector('.menu .close'); // Получили кнопку закрытия
-    const menu = document.querySelector('.menu'); // Получили само меню
-    let isMenuOpen = false; // Флаг, чтобы проверить, открыто ли меню
-    let menuTimeline; // Переменная для хранения таймлайна анимации
+    const burger = document.querySelector('.burger');
+    const closeButton = document.querySelector('.menu .close');
+    const menu = document.querySelector('.menu');
+    const menuTimeline = handleMenuClick();
 
     burger.addEventListener('click', function() {
-        if (!isMenuOpen) { // Проверяем, не открыто ли уже меню
+        if (menuTimeline.reversed()) {
             menu.classList.add('menu--open');
-            if (menuTimeline) {
-                menuTimeline.kill(); // Остановим и удалим предыдущую анимацию
-            }
-            menuTimeline = handleMenuClick(); // Создаем новый таймлайн анимации
-            menuTimeline.play(); // Воспроизводим анимацию только если меню не открыто
-            isMenuOpen = true; // Устанавливаем флаг в true, чтобы пометить, что меню открыто
+            menuTimeline.play();
         }
     });
 
     closeButton.addEventListener('click', function() {
-        if (isMenuOpen) { // Проверяем, открыто ли меню
-            menu.classList.remove('menu--open');
-            if (menuTimeline) {
-                menuTimeline.reverse(); // Проигрываем обратную анимацию
-                menuTimeline.kill(); // Удаляем анимацию
-            }
-            isMenuOpen = false; // Устанавливаем флаг в false, чтобы пометить, что меню закрыто
+        if (!menuTimeline.reversed()) {
+            menuTimeline.reverse();
+            menuTimeline.eventCallback("onReverseComplete", function() {
+                menu.classList.remove('menu--open');
+            });
         }
     });
 });
