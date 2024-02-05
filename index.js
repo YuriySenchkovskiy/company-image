@@ -73,7 +73,7 @@ function handleMenuClick() {
     }, 0)
 
     // Анимация для .menu__container: появление снизу вверх
-    .from(".menu__container", {
+    .from(".menu", {
         y: 50,
         opacity: 0,
         duration: 1.2,
